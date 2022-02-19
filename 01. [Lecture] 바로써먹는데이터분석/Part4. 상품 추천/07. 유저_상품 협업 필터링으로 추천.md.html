@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>07. 유저_상품 협업 필터링으로 추천.md</title><style></style></head><body id="preview">
+<h1 class="code-line" data-line-start=0 data-line-end=1><a id="Part_4___0"></a>Part 4. 상품 추천</h1>
+<h4 class="code-line" data-line-start=2 data-line-end=3><a id="01____2"></a>01.추천 시스템이 쓰이는 곳</h4>
+<ul>
+<li class="has-line-data" data-line-start="3" data-line-end="4">쇼핑몰, 광고, OTT, 컨텐츠 사업, 음악 추천</li>
+<li class="has-line-data" data-line-start="4" data-line-end="6">추천 시스템은 데이터 분석이 비즈니스와 가장 밀접하게 맞닿은 분야 중 하나</li>
+</ul>
+<h4 class="code-line" data-line-start=6 data-line-end=7><a id="___6"></a>추천 알고리즘의 종류</h4>
+<ul>
+<li class="has-line-data" data-line-start="7" data-line-end="8"><strong>컨텐츠 기반 기법</strong> : 유저와 컨텐츠의 특성 (feature)을 이용해 추천</li>
+<li class="has-line-data" data-line-start="8" data-line-end="9">유저의 나이, 성별 등과 컨텐츠의 장르 등의 특징 이용</li>
+<li class="has-line-data" data-line-start="9" data-line-end="10">좀 더 정교한 추천 가능</li>
+<li class="has-line-data" data-line-start="10" data-line-end="11">콜드 스타트(cold start) 문제에 빠지지 않는다.</li>
+<li class="has-line-data" data-line-start="11" data-line-end="12">높은 정확도를 위해서는 정교한 특성 정의와 태깅 필요</li>
+<li class="has-line-data" data-line-start="12" data-line-end="13">유저에 대한 자세한 정보는 얻기 쉽지 않다.</li>
+<li class="has-line-data" data-line-start="13" data-line-end="14"><strong>협업 필터링(collaborative filtering) 기법</strong> : 상품과 유저의 인터렉션(interection) 데이터로 추천을 수행하는 기법</li>
+<li class="has-line-data" data-line-start="14" data-line-end="15">상품이나 유저에 대해 아무 정도가 없어도 인터렉션망 있으면 추천 알고리즘을 만들 수 있다.</li>
+<li class="has-line-data" data-line-start="15" data-line-end="16">상품이나 유저에 대한 추가적인 데이터 활용이 어렵다.</li>
+<li class="has-line-data" data-line-start="16" data-line-end="17">신상품이나 신규 유저의 경우 콜드 스타트(cold start) 문제를 겪을 수 있다.</li>
+<li class="has-line-data" data-line-start="17" data-line-end="18">유저-상품 인터렉션 데이터 : 영화에서 평점, 상품에서 구매 여부, 광고에서 클릭 여부</li>
+<li class="has-line-data" data-line-start="18" data-line-end="19">주로 sparse matrix이다.</li>
+<li class="has-line-data" data-line-start="19" data-line-end="20">메모리 기반</li>
+<li class="has-line-data" data-line-start="20" data-line-end="21">모든 유저와 모든 상품의 인터렉션 벡터로 표현</li>
+<li class="has-line-data" data-line-start="21" data-line-end="22">비슷한 유저, 비슷한 상품을 찾아서 추천</li>
+<li class="has-line-data" data-line-start="22" data-line-end="23">모델 기반</li>
+<li class="has-line-data" data-line-start="23" data-line-end="24">일종의 차원축소, 유저와 상품 인터렉션 벡터를 저차원 벡터로 매핑</li>
+<li class="has-line-data" data-line-start="24" data-line-end="25">노이즈를 줄이고 메모리 사용량을 줄일 수 있음</li>
+<li class="has-line-data" data-line-start="25" data-line-end="27">추천의 다양성이 줄어들 수 있음 (추천의 오류를 막아줄 수 있는 장점도 있음)</li>
+</ul>
+<h2 class="code-line" data-line-start=27 data-line-end=28><a id="__7_27"></a>실전 프로젝트 7)</h2>
+<h3 class="code-line" data-line-start=28 data-line-end=29><a id="____28"></a>유저/상품 협업 필터링으로 추천하기</h3>
+<h4 class="code-line" data-line-start=29 data-line-end=30><a id="01_Project_Overview_29"></a>01. Project Overview</h4>
+<ul>
+<li class="has-line-data" data-line-start="30" data-line-end="34">메모리 기반 협업 필터링
+<ul>
+<li class="has-line-data" data-line-start="31" data-line-end="32">유사한 상품 기반 추천</li>
+<li class="has-line-data" data-line-start="32" data-line-end="33">유사한 유저 기반 추천</li>
+<li class="has-line-data" data-line-start="33" data-line-end="34">인터렉션 행렬을 그대로 사용해 로우 벡터를 활용한 유사도 비교</li>
+</ul>
+</li>
+</ul>
+</body></html>

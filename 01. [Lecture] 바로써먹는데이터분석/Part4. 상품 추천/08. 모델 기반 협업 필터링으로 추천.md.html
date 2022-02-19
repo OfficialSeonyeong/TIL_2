@@ -1,0 +1,178 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>08. 모델 기반 협업 필터링으로 추천.md</title><style></style></head><body id="preview">
+<h1 class="code-line" data-line-start=0 data-line-end=1><a id="Part_4___0"></a>Part 4. 상품 추천</h1>
+<h2 class="code-line" data-line-start=2 data-line-end=3><a id="__8_2"></a>실전 프로젝트 8)</h2>
+<h3 class="code-line" data-line-start=3 data-line-end=4><a id="_____3"></a>모델 기반 협업 필터링으로 추천하기</h3>
+<h4 class="code-line" data-line-start=4 data-line-end=5><a id="01_Project_Overview_4"></a>01. Project Overview</h4>
+<ul>
+<li class="has-line-data" data-line-start="5" data-line-end="8">모델 기반 협업 필터링
+<ul>
+<li class="has-line-data" data-line-start="6" data-line-end="8">상품과 유저를 저차원 벡터로 매핑해 유사도 비교</li>
+</ul>
+</li>
+</ul>
+<h4 class="code-line" data-line-start=8 data-line-end=9><a id="02___Matrix_Factorization__1_8"></a>02. 행렬 분해 (Matrix Factorization) 이론 1</h4>
+<p class="has-line-data" data-line-start="9" data-line-end="10">메모리 기반 vs 모델 기반 협업 필터링</p>
+<ul>
+<li class="has-line-data" data-line-start="10" data-line-end="11">유저-상품 인터렉션 기반 예측</li>
+<li class="has-line-data" data-line-start="11" data-line-end="13">메모리 기반은 데이터에 대한 가정이 없으나, 모델 기반은 데이터에 대한 가정이 있다.</li>
+</ul>
+<h5 class="code-line" data-line-start=13 data-line-end=14><a id="_____13"></a>모델 기반 협업 필터링의 특징</h5>
+<ul>
+<li class="has-line-data" data-line-start="14" data-line-end="15">행렬분해 (Matrix Factorization): Sparse하고 거대한 인터렉션 행렬을 Dense한 행렬 두개로 분해한다.(유저 벡터와 상품 벡터의 내적이다.)</li>
+<li class="has-line-data" data-line-start="15" data-line-end="16">유저 요소(user factor) 행렬 -유저 표현(representation)을 담는다.</li>
+<li class="has-line-data" data-line-start="16" data-line-end="17">상품 요소(item factor) 행렬 -상품 표현(representation)을 담는다.</li>
+<li class="has-line-data" data-line-start="17" data-line-end="18">가정: 유저와 상품의 특징은 더 낮은 차원으로 표현 가능하다.</li>
+<li class="has-line-data" data-line-start="18" data-line-end="20">노이즈가 감소해 가장 큰 특징을 뽑아낼 수 있다.</li>
+</ul>
+<p class="has-line-data" data-line-start="20" data-line-end="21"><em>컨텐츠 기반 추천은 상품/유저의 특징을 직접 기술한다.</em></p>
+<p class="has-line-data" data-line-start="22" data-line-end="23"><strong>저차원 밀집(dense) 벡터</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="23" data-line-end="24">수학적인 의미는 있지만 직관적으로 이해하기는 어렵다.</li>
+<li class="has-line-data" data-line-start="24" data-line-end="26">하지만 사람이 생각하는 의미를 잡아내는 경우가 많다.</li>
+</ul>
+<p class="has-line-data" data-line-start="26" data-line-end="29">$$<br>
+M=X.Y^T<br>
+$$</p>
+<p class="has-line-data" data-line-start="30" data-line-end="33">M: 인터렉션 행렬 (nXm)<br>
+X: 유저 요소 행렬 (nXl)<br>
+Y: 상품 요소 행렬 (mXl)</p>
+<p class="has-line-data" data-line-start="34" data-line-end="36">-&gt; 인터렉션 행렬을 최대한 근사할 수 있도록 유저 행렬과 상품 행렬 만들기<br>
+-&gt; “경사하강법(Gradient descent)”</p>
+<ul>
+<li class="has-line-data" data-line-start="37" data-line-end="38">메모리 효율성: 인터렉션 행렬을 그대로 저장하지 않고 매핑된 저차원 행렬만 저장할 수 있다.</li>
+<li class="has-line-data" data-line-start="38" data-line-end="39">계산 효율성: 고차원이 아닌 저차원 연산을 하므로 계산량이 적어진다.</li>
+<li class="has-line-data" data-line-start="39" data-line-end="41">학습된 모델 활용</li>
+</ul>
+<h4 class="code-line" data-line-start=41 data-line-end=42><a id="03___Matrix_Factorization__2_41"></a>03. 행렬 분해 (Matrix Factorization) 이론 2</h4>
+<p class="has-line-data" data-line-start="42" data-line-end="43"><strong>행렬 분해 확장</strong></p>
+<ul>
+<li class="has-line-data" data-line-start="43" data-line-end="44">내적이 적합하지 않은 경우 -&gt; 인터렉션이 이진분류로 나타나는 경우 -&gt; 내적을 입력으로 받고 이진 분류를 출력하는 함수가 필요 -&gt; Sigmoid</li>
+<li class="has-line-data" data-line-start="44" data-line-end="45">또는 내적을 거치지 않고 유저 벡터와 상품 벡터를 직접 입력으로 받아 관련도 출력하는 함수 사용</li>
+<li class="has-line-data" data-line-start="45" data-line-end="46">장점: 유저 벡터와 상품 벡터의 더욱 복잡한 관계 모델링 가능</li>
+<li class="has-line-data" data-line-start="46" data-line-end="47">단점: 복잡한 모델 사용 시 다수의 계산을 효율적으로 하기 힘듬</li>
+<li class="has-line-data" data-line-start="47" data-line-end="52"><strong>ANN(Approximate Nearest Neighbors)</strong>
+<ul>
+<li class="has-line-data" data-line-start="48" data-line-end="49">유사한 벡터를 모든 점들과의 내적을 계산하지 않고 효율적으로 찾는 기법</li>
+<li class="has-line-data" data-line-start="49" data-line-end="50">정확도와 효율성 사이 조절 가능</li>
+<li class="has-line-data" data-line-start="50" data-line-end="52">벡터들을 클러스터 별로 나누어 놓고 같은 클러스터 내에서만 내적 계산 (클러스터링)</li>
+</ul>
+</li>
+</ul>
+<h4 class="code-line" data-line-start=52 data-line-end=53><a id="04_____52"></a>04. 고도화된 추천 시스템 살펴보기</h4>
+<ol>
+<li class="has-line-data" data-line-start="53" data-line-end="109">유튜브 추천 시스템
+<ul>
+<li class="has-line-data" data-line-start="54" data-line-end="55">개인화 동영상 추천 &amp; 유저의 관심사에 맞는 고품질 영상 추천 &amp; 새롭고 신선한 영상 추천 &amp; top-N 추천</li>
+<li class="has-line-data" data-line-start="55" data-line-end="61">장애물
+<ul>
+<li class="has-line-data" data-line-start="56" data-line-end="57">메타데이터가 적거나 없음</li>
+<li class="has-line-data" data-line-start="57" data-line-end="58">영상 수가 극도로 많음</li>
+<li class="has-line-data" data-line-start="58" data-line-end="59">영상이 대부분 짧기 때문에 유저 인터렉션이 짧고 노이즈가 많음</li>
+<li class="has-line-data" data-line-start="59" data-line-end="60">유저의 선호가 직접적으로 드러나는 경우가 적음</li>
+<li class="has-line-data" data-line-start="60" data-line-end="61">동영상이 바이럴되었다가 인기가 식는 생애 주기가 짧음</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="61" data-line-end="109">추천 시스템 디자인 -&gt; 2단계 접근(two-stage approach)
+<ul>
+<li class="has-line-data" data-line-start="62" data-line-end="65"><strong>후보 생성(candidate generation) 모델</strong>
+<ul>
+<li class="has-line-data" data-line-start="63" data-line-end="64">수백만 개의 동영상 중에서 수백 개의 후보를 추린다.</li>
+<li class="has-line-data" data-line-start="64" data-line-end="65">단순하고 계산이 빠른 모델 사용</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="65" data-line-end="68"><strong>랭킹(ranking)모델</strong>
+<ul>
+<li class="has-line-data" data-line-start="66" data-line-end="67">수백 개의 후보에 점수를 매겨 정렬</li>
+<li class="has-line-data" data-line-start="67" data-line-end="68">정교한 모델 사용</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="68" data-line-end="77">2010년
+<ul>
+<li class="has-line-data" data-line-start="69" data-line-end="73">후보 생성 모델: <strong>연관 규칙(association rule)</strong>
+<ul>
+<li class="has-line-data" data-line-start="70" data-line-end="71">한 영상을 본 유저가 다른 영상을 볼 확률이 높으면 두 영상이 연관(related)되어 있다고 가정</li>
+<li class="has-line-data" data-line-start="71" data-line-end="72">한 세션 내에서 재생된 영상들을 같이 본 영상으로 측정</li>
+<li class="has-line-data" data-line-start="72" data-line-end="73">유저가 인터렉션한 동영상을 시드(seed)로 놓고, 그와 연관된 영상들을 모은다. -&gt; 다시 모은 영상들과 연관성이 높은 영상들을 모으는 과정 반복</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="73" data-line-end="77">랭킹 모델: <strong>동영상 품질, 유저선호, 다양성 기반 선형 모델(linear model)</strong>
+<ul>
+<li class="has-line-data" data-line-start="74" data-line-end="75">동영상 품질(video quality): 유저와 상관 없이 좋아할 정도로, 인기도, 평점, 댓글 수, 공유 수 등 고려</li>
+<li class="has-line-data" data-line-start="75" data-line-end="76">유저 선호(User specificity): 유저의 취향과 선호에 맞는 정도로, 유저의 시청 목록 기반</li>
+<li class="has-line-data" data-line-start="76" data-line-end="77">다양성(Diversification): 한 시드에서 나오는 추천 영상 수 제한 또는 같은 채널에서의 추천 영상 수 제한</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="77" data-line-end="97">2016년
+<ul>
+<li class="has-line-data" data-line-start="78" data-line-end="91">딥러닝 기반 후보 생성 모델
+<ul>
+<li class="has-line-data" data-line-start="79" data-line-end="80">행렬 분해(matrix factorization)와 유사하게 유저 임베딩</li>
+<li class="has-line-data" data-line-start="80" data-line-end="81">서로 다른 성질의 데이터(시청목록, 검색어 기록, 성별, 지역적 특성 등)를 딥러닝을 이용해 하나의 모델로 다름</li>
+<li class="has-line-data" data-line-start="81" data-line-end="82">유저가 시청할 동영상 예측</li>
+<li class="has-line-data" data-line-start="82" data-line-end="86">레이블 시점 문제
+<ul>
+<li class="has-line-data" data-line-start="83" data-line-end="84">입력과 정답값을 랜덤으로 선택하면 실제 서비스 환경과 달라질 수 있다.</li>
+<li class="has-line-data" data-line-start="84" data-line-end="85">실 서비스는 과거 데이터를 바탕으로 미래 데이터를 예측하지만, 시점이 다양한 데이터를 랜덤으로 학습, 테스트 과정을 거치면 실 서비스와 달라질 수 있다.</li>
+<li class="has-line-data" data-line-start="85" data-line-end="86">즉, 과거 데이터로 학습, 이후 데이터로 테스트 과정을 거치는 것이 좋다.</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="86" data-line-end="91">데이터 시의성(freshness) 문제
+<ul>
+<li class="has-line-data" data-line-start="87" data-line-end="88">유저들은 연관성이 비슷하면 새로운 영상 선호</li>
+<li class="has-line-data" data-line-start="88" data-line-end="89">하지만 머신 러닝은 근본적으로 과거 데이터로 학습하기에 새로운 컨텐츠 추천에 취약</li>
+<li class="has-line-data" data-line-start="89" data-line-end="91">데이터 나이(example age) 도입해 문제 해결
+<ul>
+<li class="has-line-data" data-line-start="90" data-line-end="91">데이터의 오래된 정도를 입력으로 넣어 서비스 시에는 이 입력값을 0으로 넣어 시의성 보완</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="91" data-line-end="97">딥러닝 기반 랭킹 모델
+<ul>
+<li class="has-line-data" data-line-start="92" data-line-end="97">범주형, 연속형 변수 수백여개의 특징(feature) 사용
+<ul>
+<li class="has-line-data" data-line-start="93" data-line-end="94">유저 로그인 여부</li>
+<li class="has-line-data" data-line-start="94" data-line-end="95">유저의 마지막 검색어</li>
+<li class="has-line-data" data-line-start="95" data-line-end="96">직전 시청한 N개 영상</li>
+<li class="has-line-data" data-line-start="96" data-line-end="97">유저가 해당 채널에서 본 영상의 수/시간 등</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="97" data-line-end="109">2019년
+<ul>
+<li class="has-line-data" data-line-start="98" data-line-end="109">랭킹 모델 업그레이드
+<ul>
+<li class="has-line-data" data-line-start="99" data-line-end="100">학습 목표 다양화</li>
+<li class="has-line-data" data-line-start="100" data-line-end="101">'다음에 뭘 시청할지’만을 목표로 하면 광고나 낚시성 영상 추천 확률 증가</li>
+<li class="has-line-data" data-line-start="101" data-line-end="102">시청 시간, 좋아요, 공유 등 추천에 여러 가지 목표를 가진다. -&gt; 참여도 목표(Engagement objective), 만족도 목표(Satisfaction objective)</li>
+<li class="has-line-data" data-line-start="102" data-line-end="105"><strong>다중 게이트 전문가 혼합 모델(Multi-gate Mixture-of-Expert Model)</strong>
+<ul>
+<li class="has-line-data" data-line-start="103" data-line-end="104">멀티 태스크 모델 사용</li>
+<li class="has-line-data" data-line-start="104" data-line-end="105">서로 다른 목표의 딥러닝 네트워크 사이에서 몇개 레이어는 공유, 몇개 레이어는 독립 사용</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="105" data-line-end="109">피드백 루프(feedback loop) 문제
+<ul>
+<li class="has-line-data" data-line-start="106" data-line-end="107">모델이 아이템을 추천하면 유저가 클릭될 확률이 높아지고, 이는 다시 모델이 학습해 한번 추천한 아이템이 계속되서 추천되는 문제 -&gt; bias 강화</li>
+<li class="has-line-data" data-line-start="107" data-line-end="108">이를 해결하기 위해 상위 랭크 영상의 가중치를 고의로 떨어뜨린다.</li>
+<li class="has-line-data" data-line-start="108" data-line-end="109">유튜브는 모델의 입력으로 랭크 위치를 넣어 학습한 뒤 서빙 시에는 랭크 위치를 1로 고정 -&gt; 랭크로 인한 효과 제거</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="109" data-line-end="112"></li>
+</ol>
+</body></html>
